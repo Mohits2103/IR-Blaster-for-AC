@@ -7,10 +7,10 @@
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
 #include <WiFiClient.h>
-#include <ir_Fujitsu.h>
+#include <ir_Panasonic.h>
 
 const uint16_t kIrLed = 4;  // ESP8266 GPIO pin to use. Recommended: 4 (D2).
-IRFujitsuAC ac(kIrLed);
+IRPanasonicAc ac(kIrLed);
 const char* ssid = "USERNAME";
 const char* password = "PASSWORD";
 MDNSResponder mdns;
@@ -21,13 +21,11 @@ IRsend irsend(4);  // An IR LED is controlled by GPIO pin 4 (D2)
 int te=24;
 void printState() {
   // Display the settings.
-  Serial.println("Fujitsu A/C remote is in the following state:");
+  Serial.println("Panasonic A/C remote is in the following state:");
   Serial.printf("  %s\n", ac.toString().c_str());
   // Display the encoded IR sequence.
   unsigned char* ir_code = ac.getRaw();
   Serial.print("IR Code: 0x");
-  for (uint8_t i = 0; i < ac.getStateLength(); i++)
-    Serial.printf("%02X", ir_code[i]);
   Serial.println();
 }
 
@@ -52,11 +50,9 @@ void handleRoot() {
   "<p><a href=\"ir?code=41\">Set fan mode High</a></p>" \
   "<p><a href=\"ir?code=42\">Set fan mode Medium</a></p>" \
   "<p><a href=\"ir?code=43\">Set fan mode Low</a></p>" \
-  "<p><a href=\"ir?code=44\">Set fan mode Quiet</a></p>" \
-  "<p><a href=\"ir?code=50\">Set Swing Both</a></p>" \
-  "<p><a href=\"ir?code=51\">Set Swing Vertical</a></p>" \
-  "<p><a href=\"ir?code=52\">Set Swing Horizontal</a></p>" \
-  "<p><a href=\"ir?code=53\">Set Swing Off</a></p>" \
+  "<p><a href=\"ir?code=50\">Set Swing Move</a></p>" \
+  "<p><a href=\"ir?code=51\">Set Swing Mask</a></p>" \
+  "<p><a href=\"ir?code=52\">Set Swing Stop</a></p>" \
                 "</body>" \
               "</html>");
 }
@@ -75,10 +71,10 @@ void handleIr() {
   Serial.println("Default state of the remote.");
   printState();
   Serial.println("Setting desired state for A/C.");
-  ac.setCmd(kFujitsuAcCmdTurnOn);
-  ac.setSwing(kFujitsuAcSwingBoth);
-  ac.setMode(kFujitsuAcModeCool);
-  ac.setFanSpeed(kFujitsuAcFanHigh);
+  ac.on();
+  ac.setSwingVertical(kPanasonicAcSwingVAuto);
+  ac.setMode(kPanasonicAcAuto);
+  ac.setFan(kPanasonicAcFanAuto);
   ac.setTemp(te);  // 24C
     ac.send();}
     
@@ -92,11 +88,8 @@ void handleIr() {
   Serial.println("Default state of the remote.");
   printState();
   Serial.println("Setting desired state for A/C.");
-  ac.setCmd(kFujitsuAcCmdTurnOff);
-  ac.setSwing(kFujitsuAcSwingBoth);
-  ac.setMode(kFujitsuAcModeCool);
-  ac.setFanSpeed(kFujitsuAcFanHigh);
-  ac.setTemp(te);  // 24C
+  ac.off();
+
     ac.send();}
 
       if(code == 222) //TEMP_UP 
@@ -122,7 +115,7 @@ if(code == 30) //MODE_AUTO
   ac.begin();
   Serial.begin(115200);
   delay(200);
-  ac.setMode(kFujitsuAcModeAuto);
+  ac.setMode(kPanasonicAcAuto);
     ac.send();}
 
 
@@ -131,7 +124,7 @@ if(code == 31) //MODE_DRY
   ac.begin();
   Serial.begin(115200);
   delay(200);
-  ac.setMode(kFujitsuAcModeDry);
+  ac.setMode(kPanasonicAcDry);
     ac.send();}
 
     
@@ -140,7 +133,7 @@ if(code == 32) //MODE_COOL
   ac.begin();
   Serial.begin(115200);
   delay(200);
-  ac.setMode(kFujitsuAcModeCool);
+  ac.setMode(kPanasonicAcCool);
     ac.send();}
 
 
@@ -150,8 +143,7 @@ if(code == 33) //MODE_FAN
   ac.begin();
   Serial.begin(115200);
   delay(200);
-  ac.setMode(kFujitsuAcModeFan);
-  ac.setFanSpeed(kFujitsuAcFanHigh);
+  ac.setMode(kPanasonicAcFan);
     ac.send();}
 
 
@@ -161,8 +153,8 @@ if(code == 40) //FAN_AUTO
   ac.begin();
   Serial.begin(115200);
   delay(200);
-  ac.setMode(kFujitsuAcModeFan);
-  ac.setFanSpeed(kFujitsuAcFanAuto);
+  ac.setMode(kPanasonicAcFan);
+  ac.setFan(kPanasonicAcFanAuto);
     ac.send();}
 
 
@@ -171,8 +163,8 @@ if(code == 41) //FAN_HIGH
   ac.begin();
   Serial.begin(115200);
   delay(200);
-  ac.setMode(kFujitsuAcModeFan);
-  ac.setFanSpeed(kFujitsuAcFanHigh);
+  //ac.setMode(kPanasonicAcFan);
+  ac.setFan(kPanasonicAcFanMax);
     ac.send();}
 
 if(code == 42) //FAN_medium
@@ -180,71 +172,51 @@ if(code == 42) //FAN_medium
   ac.begin();
   Serial.begin(115200);
   delay(200);
-  ac.setMode(kFujitsuAcModeFan);
-  ac.setFanSpeed(kFujitsuAcFanMed);
-    ac.send();}
+  ac.setMode(kPanasonicAcFan);
+  ac.send();}
 
 if(code == 43) //FAN_low
       {
   ac.begin();
   Serial.begin(115200);
   delay(200);
-  ac.setMode(kFujitsuAcModeFan);
-  ac.setFanSpeed(kFujitsuAcFanLow);
+//  ac.setMode(kPanasonicAcFan);
+  ac.setFan(kPanasonicAcFanMin);
     ac.send();}
 
 
-if(code == 44) //FAN_quiet
+
+
+
+  if(code == 50) //Swing_Auto
       {
   ac.begin();
   Serial.begin(115200);
   delay(200);
-  ac.setMode(kFujitsuAcModeFan);
-  ac.setFanSpeed(kFujitsuAcFanQuiet);
+  ac.setSwingVertical(kPanasonicAcSwingVAuto);
     ac.send();}
 
 
-
-
-  if(code == 50) //Swing_Both
+  if(code == 51) //Swing_Move
       {
   ac.begin();
   Serial.begin(115200);
   delay(200);
-  ac.setSwing(kFujitsuAcSwingBoth);
+  ac.setSwingVertical(kPanasonicAcSwingVUp);
     ac.send();}
 
 
-  if(code == 51) //Swing_Vert
+
+  if(code == 52) //Swing_Stop
       {
   ac.begin();
   Serial.begin(115200);
   delay(200);
-  ac.setSwing(kFujitsuAcSwingVert);
+  ac.setSwingVertical(kPanasonicAcSwingVDown);
     ac.send();}
-
-
-
-  if(code == 52) //Swing_Hori
-      {
-  ac.begin();
-  Serial.begin(115200);
-  delay(200);
-  ac.setSwing(kFujitsuAcSwingHoriz);
-    ac.send();}
-
-
-  if(code == 53) //Swing_off
-      {
-  ac.begin();
-  Serial.begin(115200);
-  delay(200);
-  ac.setSwing(kFujitsuAcSwingOff);
-    ac.send();}
-
 
     
-    
+     
     }
   }
   handleRoot();
