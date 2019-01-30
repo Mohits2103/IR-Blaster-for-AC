@@ -1,6 +1,6 @@
 # IR Blaster remote for AIr Coolers
 
- ACs supported, Mitsubishi, Fujitsu and Hitachi
+ ACs supported, Mitsubishi, Fujitsu,Panasonic and Hitachi
 
  Just add the SSID and Password as per your wifi username and password respectively
 
