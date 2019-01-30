@@ -6,6 +6,6 @@
 
  Add libraries first and circuit diagram is also give
 
- Shall soon add other comapny ACs also
+ Shall add other company ACs soon
 
- Please give a star if you like it
+ Please give a star if you like it or to bookmark this repository for other AC updates.
