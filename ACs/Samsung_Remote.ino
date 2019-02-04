@@ -11,8 +11,8 @@
 
 const uint16_t kIrLed = 4;  // ESP8266 GPIO pin to use. Recommended: 4 (D2).
 IRSamsungAc ac(kIrLed);
-const char* ssid = "Ansara act";
-const char* password = "Ansaraact@1234";
+const char* ssid = "USERNAME";
+const char* password = "PASSWORD";
 MDNSResponder mdns;
 
 ESP8266WebServer server(80);
