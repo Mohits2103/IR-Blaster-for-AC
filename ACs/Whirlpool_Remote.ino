@@ -11,8 +11,8 @@
 
 const uint16_t kIrLed = 4;  // ESP8266 GPIO pin to use. Recommended: 4 (D2).
 IRWhirlpoolAc ac(kIrLed);
-const char* ssid = "IOT";
-const char* password = "iotdevice";
+const char* ssid = "USERNAME";
+const char* password = "PASSWORD";
 MDNSResponder mdns;
 
 ESP8266WebServer server(80);
