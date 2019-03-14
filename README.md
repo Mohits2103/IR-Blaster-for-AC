@@ -1,7 +1,11 @@
-# IR Blaster remote for Mitsubishi AIr Coolers
+# IR Blaster remote for Air Coolers (ACs)
 
-# Just add the SSID and Password as per your wifi username and password respectively
+ ACs supported, Mitsubishi, Fujitsu, Panasonic, Toshiba, Whirlpool, Samsung and Hitachi.
 
-# Add libraries first and circuit diagram is also give
+ Just add the SSID and Password as per your wifi username and password respectively
 
-# Shall soon add other comapny ACs also
+ Add libraries first and circuit diagram is also give
+
+ Shall add other company ACs soon
+
+ Please give a star if you like it or to bookmark this repository for other AC updates.
